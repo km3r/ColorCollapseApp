@@ -1,0 +1,45 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="#0099cc" tools:context=".Compact">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+    <TextView android:id="@+id/fullscreen_content" android:layout_width="match_parent"
+        android:layout_height="match_parent" android:keepScreenOn="true" />
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Restart"
+            android:id="@+id/button"
+            android:layout_gravity="left|bottom" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Difficulty"
+            android:id="@+id/button3"
+            android:layout_gravity="right|bottom" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Game"
+            android:id="@+id/button2"
+            android:layout_gravity="center_horizontal|bottom" />
+
+        <kyle.dynamicdata.io.compact.engine.BoardView
+            android:layout_width="match_parent"
+            android:layout_height="469dp"
+            android:id="@+id/surfaceView"
+            android:layout_gravity="right|top" />
+
+    </FrameLayout>
+
+</FrameLayout>
