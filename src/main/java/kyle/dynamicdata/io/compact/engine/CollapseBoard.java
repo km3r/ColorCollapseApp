@@ -58,15 +58,15 @@ public class CollapseBoard
      * Update the board with an action.
      * @param nextAction the action to perform
      */
-    protected void update(Action nextAction)
+    public void update(Action nextAction)
     {
         if (nextAction.isCommand()) {
             switch (nextAction.getAction()) {
                 case RESET:
-                    reset();
+                    restart();
                     break;
                 case RESTART:
-                    restart();
+                    reset();
                     break;
                 case DIFFICULT:
                     if (kMaxData == 3){

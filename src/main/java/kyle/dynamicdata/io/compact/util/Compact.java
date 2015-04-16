@@ -1,8 +1,10 @@
 package kyle.dynamicdata.io.compact;
 
 import kyle.dynamicdata.io.compact.R;
+import kyle.dynamicdata.io.compact.engine.Action;
 import kyle.dynamicdata.io.compact.engine.BoardView;
 import kyle.dynamicdata.io.compact.engine.CollapseBoard;
+import kyle.dynamicdata.io.compact.engine.Command;
 import kyle.dynamicdata.io.compact.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -13,6 +15,12 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 
 /**
@@ -56,6 +64,14 @@ public class Compact extends Activity {
 
         setContentView(R.layout.activity_compact);
 
+        AdView adView = new AdView(this);
+
+        adView.setAdSize(AdSize.SMART_BANNER);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+
+        ((FrameLayout) findViewById(R.id.fView)).addView(adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
 
 
         final View contentView = findViewById(R.id.fullscreen_content);
@@ -77,8 +93,8 @@ public class Compact extends Activity {
         };
 
 
-        new CollapseBoard(boardView, 8, 3, buttons);
-        boardView.draw();
+        new CollapseBoard(boardView, 8, 3, buttons).update(new Action(Command.RESTART));
+
 
     }
 }
