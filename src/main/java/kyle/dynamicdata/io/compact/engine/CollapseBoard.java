@@ -2,6 +2,7 @@ package kyle.dynamicdata.io.compact.engine;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import kyle.dynamicdata.io.compact.R;
 
@@ -20,6 +21,9 @@ public class CollapseBoard
     private int numberRemaining;
     private int kMaxData;
     private int turns;
+    private int wins = 0;
+    private int loses = -1;
+    private int totalScore;
 
     /**
      * Initialize a board with an
@@ -28,7 +32,7 @@ public class CollapseBoard
      * @param size size of board
      * @param kMaxData number of types of tiles
      */
-    public CollapseBoard(BoardView output, int size, int kMaxData, Button[] buttons)
+    public CollapseBoard(BoardView output, int size, int kMaxData, Button[] buttons, TextView textView)
     {
         TouchInput input = new TouchInput(size,size,output) {
             @Override
@@ -41,9 +45,10 @@ public class CollapseBoard
         //output.setOnClickListener(input);
         output.setOnTouchListener(input);
 
-        buttons[0].findViewById(R.id.button).setOnClickListener(input);
+        //buttons[0].findViewById(R.id.button).setOnClickListener(input);
         buttons[1].findViewById(R.id.button2).setOnClickListener(input);
         buttons[2].findViewById(R.id.button3).setOnClickListener(input);
+        textView.setOnClickListener(input);
 
         numberRemaining = size * size;
         this.kMaxData = kMaxData;
@@ -51,7 +56,7 @@ public class CollapseBoard
         boardData = new BoardSquare[size][size];
         startBoard = new BoardSquare[size][size];
         reset();
-        output.pushUpdate(boardData, numberRemaining, turns);
+        output.pushUpdate(boardData, numberRemaining, turns, wins, loses, totalScore);
     }
 
     /**
@@ -65,25 +70,42 @@ public class CollapseBoard
                 case RESET:
                     restart();
                     break;
-                case RESTART:
-                    reset();
-                    break;
                 case DIFFICULT:
+                    totalScore += score();
                     if (kMaxData == 3){
                         kMaxData = 4;
                     } else {
                         kMaxData = 3;
                     }
+                    if (numberRemaining == 0)
+                    {
+                        wins++;
+                    } else
+                    {
+                        loses++;
+                    }
+                    reset();
+                    break;
+                case RESTART:
+                    if (numberRemaining == 0)
+                    {
+                        wins++;
+                    } else
+                    {
+                        loses++;
+                    }
+                    totalScore += score();
+                    reset();
                     break;
                 default:
                     output.pushError("Bad input.");
                     break;
             }
-            output.pushUpdate(boardData,numberRemaining,turns);
+            output.pushUpdate(boardData,numberRemaining,turns, wins, loses, totalScore);
         }
         else {
             press(nextAction.row, nextAction.col);
-            output.pushUpdate(boardData, numberRemaining, turns);
+            output.pushUpdate(boardData, numberRemaining, turns, wins, loses, totalScore);
         }
     }
 
@@ -124,16 +146,15 @@ public class CollapseBoard
             {
                 pressHelper(row, col, boardData[row][col]);
                 shift();
+                turns++;
             }
             else
             {
-                turns--;
                 output.pushError("Only one tile there.");
             }
         }
         else
         {
-            turns--;
             output.pushError("Empty location.");
         }
     }
@@ -175,7 +196,7 @@ public class CollapseBoard
         }
         shiftL(boardData[0].length / 2 - 1);
         shiftR(boardData[0].length / 2);
-        output.pushUpdate(boardData, numberRemaining, turns);
+        output.pushUpdate(boardData, numberRemaining, turns, wins, loses, totalScore);
     }
 
     /**
@@ -249,8 +270,7 @@ public class CollapseBoard
             if (boardData[row][col] == BoardSquare.WHITE)
             {
                 int space = 1;
-                while (row - space >= 0 && boardData[row - space][col] == BoardSquare.WHITE)
-                {
+                while (row - space >= 0 && boardData[row - space][col] == BoardSquare.WHITE) {
                     space++;
                 }
                 if (row - space != -1)
@@ -278,7 +298,7 @@ public class CollapseBoard
         boardData[0][0] = BoardSquare.GREEN;
         boardData[0][1] = BoardSquare.GREEN;
         numberRemaining = 2;
-        output.pushUpdate(boardData, numberRemaining, turns);
+        output.pushUpdate(boardData, numberRemaining, turns, wins, loses, totalScore);
     }
 
     /**
@@ -303,5 +323,12 @@ public class CollapseBoard
         }
         numberRemaining = boardData.length * boardData[0].length;
         turns = 0;
+    }
+    private int score(){
+        if (turns == 0 || numberRemaining > 16) return 0;
+        if (numberRemaining != 0){
+            return 64 - numberRemaining - (turns - 8) * (turns - 8);
+        }
+        return 128 - (turns - 8) * (turns - 8);
     }
 }

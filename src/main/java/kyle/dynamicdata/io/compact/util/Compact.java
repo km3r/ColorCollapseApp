@@ -1,26 +1,25 @@
 package kyle.dynamicdata.io.compact;
 
-import kyle.dynamicdata.io.compact.R;
+
 import kyle.dynamicdata.io.compact.engine.Action;
 import kyle.dynamicdata.io.compact.engine.BoardView;
 import kyle.dynamicdata.io.compact.engine.CollapseBoard;
 import kyle.dynamicdata.io.compact.engine.Command;
 import kyle.dynamicdata.io.compact.util.SystemUiHider;
 
-import android.annotation.TargetApi;
+
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+
 
 
 /**
@@ -30,6 +29,7 @@ import com.google.android.gms.ads.AdView;
  * @see SystemUiHider
  */
 public class Compact extends Activity {
+    BoardView boardView;
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -84,17 +84,52 @@ public class Compact extends Activity {
         super.onPostCreate(savedInstanceState);
 
 
-        BoardView boardView = (BoardView) findViewById(R.id.surfaceView);
+        boardView = (BoardView) findViewById(R.id.surfaceView);
+        boardView.setTextView(((TextView) findViewById(R.id.textView)));
 
-        Button[] buttons = {
-                (Button) findViewById(R.id.button),
+        final Button[] buttons = {
+                null,
+                //(Button) findViewById(R.id.button),
                 (Button) findViewById(R.id.button2),
                 (Button) findViewById(R.id.button3)
         };
 
 
-        new CollapseBoard(boardView, 8, 3, buttons).update(new Action(Command.RESTART));
+        new CollapseBoard(boardView, 8, 3, buttons, (TextView) findViewById(R.id.textView)).update(new Action(Command.RESTART));
 
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                boardView.draw();
+            }
+        };
 
+        Handler handler = new Handler();
+
+        handler.postDelayed(runnable,800);
+
+    }
+
+    @Override
+    protected void onResume(){
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                boardView.draw();
+            }
+        };
+
+        Handler handler = new Handler();
+
+        handler.postDelayed(runnable,800);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart(){
+//        boardView.draw();
+        super.onStart();
     }
 }

@@ -54,9 +54,6 @@ public abstract class TouchInput implements View.OnTouchListener,Button.OnClickL
     public void onClick(View view) {
         Log.d("canvas", "button is pressed");
         switch (view.getId()){
-            case R.id.button: //Reset
-                callback(new Action(Command.RESET));
-                break;
             case R.id.button2: //New Game
                 callback(new Action(Command.RESTART));
                 break;
@@ -67,7 +64,11 @@ public abstract class TouchInput implements View.OnTouchListener,Button.OnClickL
                 Action action = new Action((int)view.getX(),(int) view.getY());
                 callback(action);
                 break;
+            default:
+                ((BoardView) surfaceView).draw();
+                break;
         }
+
     }
 
     public abstract void callback(Action action);

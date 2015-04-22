@@ -1,8 +1,9 @@
 <resources>
-    <string name="app_name">Compact</string>
+    <string name="app_name">Color Collapse</string>
 
     <string name="button_newGame">New Game</string>
     <string name="button_restart">Restart</string>
+    <string name="wins">Score: 0\nMoves: 0\nWins:0 (0%)</string>
     <string name="button_hardMode">Difficulty</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="banner_ad_unit_id">ca-app-pub-2867455742337013/9177898681</string>

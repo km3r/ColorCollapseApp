@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.widget.TextView;
+
+import kyle.dynamicdata.io.compact.R;
 
 /**
  * Created by Kyle on 4/9/2015.
@@ -15,6 +18,11 @@ public class BoardView extends SurfaceView {
     BoardSquare[][] board;
     float x,y;
     boolean win = false;
+    int wins = 0;
+    int loses = 0;
+    private int turns;
+    private TextView textView = null;
+    private int score;
 
     public BoardView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -28,10 +36,14 @@ public class BoardView extends SurfaceView {
         super(context);
     }
 
-    void pushUpdate(BoardSquare[][] board, int numberRemaining, int turns)
+    void pushUpdate(BoardSquare[][] board, int numberRemaining, int turns, int wins, int loses, int score)
     {
         this.board = board;
         win = numberRemaining == 0;
+        this.wins = wins;
+        this.loses = loses;
+        this.turns = turns;
+        this.score = score;
         draw();
     }
 
@@ -47,7 +59,16 @@ public class BoardView extends SurfaceView {
             return;
         }
 
-        Log.d("canvas","canvas is not null");
+        float percent;
+        if (loses <= 0){
+            percent = 1;
+        }
+        else {
+            percent = wins / (float)(wins + loses);
+        }
+        if (textView != null)
+            textView.setText("Score: " + score + "\nMoves: "+ turns + "\nWins: " + wins + "(" + ((int)(100 * percent)) + "%)");
+
         x = canvas.getWidth()/(float)board[0].length;
         y = canvas.getHeight()/(float)board.length;
         for (int i = 0; i < board[0].length; i++){
@@ -79,5 +100,11 @@ public class BoardView extends SurfaceView {
     @Override
     public float getY() {
         return y;
+    }
+
+    public void setTextView(TextView textView) {
+        this.textView = textView;
+        draw();
+
     }
 }
